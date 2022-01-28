@@ -39,5 +39,5 @@ void Cell::printValue(){
 }
 
 void Cell::updateValue(unsigned int newValue) {
-    value = newValue;
+    value = newValue;.
 }
