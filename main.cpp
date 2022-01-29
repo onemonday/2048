@@ -1,5 +1,6 @@
 #include <iostream>
 #include <time.h>
+#include <windows.h>
 
 int random() {
     return rand() % 4;
@@ -15,10 +16,11 @@ public:
     void moveDown();
     void moveRight();
     void moveLeft();
-
     void printValue();
     void updateValue(unsigned int newValue);
+
     static void createNewSquare(Cell (&field)[4][4]);
+
 private:
     unsigned int value;
 };
@@ -29,6 +31,7 @@ int main() {
     Cell field[4][4];
 
     // Game start
+    Cell::createNewSquare(field);
     Cell::createNewSquare(field);
 
     for (int i = 0; i < 4; i++){
@@ -54,15 +57,20 @@ void Cell::createNewSquare(Cell (& field)[4][4]) {
     while (true) {
         unsigned int xAxis = random();
         unsigned int yAxis = random();
-        if (field[xAxis][yAxis].value == 0)
+        if (field[xAxis][yAxis].value != 0)
             continue;
         else {
             unsigned int newValue = random();
             if (newValue != 0)
                 newValue = 2;
             else newValue = 4;
+
             field[xAxis][yAxis].value = newValue;
             break;
         }
     }
+}
+
+void Cell::moveUp() {
+
 }
