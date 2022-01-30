@@ -9,6 +9,8 @@
 C:/Users/karak/Documents/Code/2048/main.cpp
 iostream
 -
-time.h
+ctime
+-
+windows.h
 -
 

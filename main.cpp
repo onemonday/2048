@@ -1,5 +1,5 @@
 #include <iostream>
-#include <time.h>
+#include <ctime>
 #include <windows.h>
 
 int random() {
@@ -10,19 +10,23 @@ class Cell {
 public:
     Cell(unsigned int value = 0) {
         Cell::value = value;
+        used = false;
     }
 
-    void moveUp();
-    void moveDown();
-    void moveRight();
-    void moveLeft();
+    static void moveUp(Cell (& field)[4][4]);
+    static void moveDown(Cell (& field)[4][4]);
+    static void moveRight(Cell (& field)[4][4]);
+    static void moveLeft(Cell (& field)[4][4]);
+
     void printValue();
     void updateValue(unsigned int newValue);
 
+    static void printField(Cell (& field)[4][4]);
     static void createNewSquare(Cell (&field)[4][4]);
 
 private:
     unsigned int value;
+    bool used;
 };
 
 int main() {
@@ -33,18 +37,31 @@ int main() {
     // Game start
     Cell::createNewSquare(field);
     Cell::createNewSquare(field);
+    Cell::printField(field);
 
-    for (int i = 0; i < 4; i++){
-        for (int j = 0; j < 4; j++)
-            field[i][j].printValue();
-        std::cout << std::endl;
-    }
-
+    Cell::moveUp(field);
+    Cell::moveDown(field);
+    Cell::moveLeft(field);
+    Cell::moveRight(field);
+    Cell::moveUp(field);
+    Cell::moveDown(field);
+    Cell::moveLeft(field);
+    Cell::moveRight(field);
     return 0;
 }
 
-void Cell::printValue(){
-    if (value == 0)
+void Cell::printField(Cell (& field)[4][4]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            field[i][j].printValue();
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void Cell::printValue() {
+    if (value  == 0)
         std::cout << "_";
     else std::cout << value;
 }
@@ -71,6 +88,129 @@ void Cell::createNewSquare(Cell (& field)[4][4]) {
     }
 }
 
-void Cell::moveUp() {
+void Cell::moveUp(Cell (& field)[4][4]) {
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {
+            if (field[i][j].value != 0) {
+                int returnPosition = i;
+                while (i > 0) {
+                    int prevPosition = i;
+                    i--;
+                    if (field[i][j].value == 0) {
+                        field[i][j] = field[prevPosition][j];
+                        field[prevPosition][j].value = 0;
+                    } else if (field[i][j].value == field[prevPosition][j].value && !field[i][j].used && !field[prevPosition][j].used) {
+                        field[i][j].updateValue(field[i][j].value << 1);
+                        field[i][j].used = true;
+                        field[prevPosition][j].value = 0;
+                    } else {
+                        if (field[prevPosition][j].used)
+                            field[prevPosition][j].used = false;
+                        if (field[i][j].used)
+                            field[i][j].used = false;
+                        break;
+                    }
+                }
+                i = returnPosition;
+            }
+        }
+    }
+    system("cls");
+    Cell::createNewSquare(field);
+    Cell::printField(field);
+}
 
+void Cell::moveDown(Cell (&field)[4][4]) {
+    for (int j = 0; j < 4; j++) {
+        for (int i = 3; i >= 0; i--) {
+            if (field[i][j].value != 0) {
+                int returnPosition = i;
+                while (i < 3) {
+                    int prevPosition = i;
+                    i++;
+                    if (field[i][j].value == 0) {
+                        field[i][j] = field[prevPosition][j];
+                        field[prevPosition][j].value = 0;
+                    } else if (field[i][j].value == field[prevPosition][j].value && !field[i][j].used && !field[prevPosition][j].used) {
+                        field[i][j].updateValue(field[i][j].value << 1);
+                        field[i][j].used = true;
+                        field[prevPosition][j].value = 0;
+                    } else {
+                        if (field[prevPosition][j].used)
+                            field[prevPosition][j].used = false;
+                        if (field[i][j].used)
+                            field[i][j].used = false;
+                        break;
+                    }
+                }
+                i = returnPosition;
+            }
+        }
+    }
+    system("cls");
+    Cell::createNewSquare(field);
+    Cell::printField(field);
+}
+
+void Cell::moveLeft(Cell (&field)[4][4]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (field[i][j].value != 0) {
+                int returnPosition = j;
+                while (j > 0) {
+                    int prevPosition = j;
+                    j--;
+                    if (field[i][j].value == 0) {
+                        field[i][j] = field[i][prevPosition];
+                        field[i][prevPosition].value = 0;
+                    } else if (field[i][j].value == field[i][prevPosition].value && !field[i][j].used && !field[i][prevPosition].used) {
+                        field[i][j].updateValue(field[i][j].value << 1);
+                        field[i][j].used = true;
+                        field[i][prevPosition].value = 0;
+                    } else {
+                        if (field[i][prevPosition].used)
+                            field[i][prevPosition].used = false;
+                        if (field[i][j].used)
+                            field[i][j].used = false;
+                        break;
+                    }
+                }
+                j = returnPosition;
+            }
+        }
+    }
+    system("cls");
+    Cell::createNewSquare(field);
+    Cell::printField(field);
+}
+void Cell::moveRight(Cell (&field)[4][4]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 3; j >= 0; j--) {
+            if (field[i][j].value != 0) {
+                int returnPosition = j;
+                while (j < 3) {
+                    int prevPosition = j;
+                    j++;
+                    if (field[i][j].value == 0) {
+                        field[i][j] = field[i][prevPosition];
+                        field[i][prevPosition].value = 0;
+                    } else if (field[i][j].value == field[i][prevPosition].value && !field[i][j].used && !field[i][prevPosition].used) {
+                        field[i][j].updateValue(field[i][j].value << 1);
+                        field[i][j].used = true;
+                        field[i][prevPosition].value = 0;
+                    } else {
+                        if (field[i][prevPosition].used)
+                            field[i][prevPosition].used = false;
+                        if (field[i][j].used)
+                            field[i][j].used = false;
+                        break;
+                    }
+                }
+                j = returnPosition;
+            }
+        }
+    }
+    system("cls");
+    Cell::createNewSquare(field);
+    Cell::printField(field);
 }
