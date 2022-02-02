@@ -1,6 +1,13 @@
 #include <iostream>
 #include <ctime>
 #include <windows.h>
+#include <conio.h>
+
+#define KEY_ARROW 224
+#define KEY_UP    72
+#define KEY_LEFT  75
+#define KEY_RIGHT 77
+#define KEY_DOWN  80
 
 int random() {
     return rand() % 4;
@@ -17,6 +24,7 @@ public:
     static void moveDown(Cell (& field)[4][4]);
     static void moveRight(Cell (& field)[4][4]);
     static void moveLeft(Cell (& field)[4][4]);
+    static void newGame();
 
     void printValue();
     void updateValue(unsigned int newValue);
@@ -39,15 +47,29 @@ int main() {
     Cell::createNewSquare(field);
     Cell::printField(field);
 
-    Cell::moveUp(field);
-    Cell::moveDown(field);
-    Cell::moveLeft(field);
-    Cell::moveRight(field);
-    Cell::moveUp(field);
-    Cell::moveDown(field);
-    Cell::moveLeft(field);
-    Cell::moveRight(field);
-    return 0;
+    // Game logic
+    while (true) {
+        unsigned char button = getch();
+        if (button == KEY_ARROW) {
+            unsigned char arrow = getch();
+            switch (arrow) {
+                case KEY_UP:
+                    Cell::moveUp(field);
+                    break;
+                case KEY_DOWN:
+                    Cell::moveDown(field);
+                    break;
+                case KEY_LEFT:
+                    Cell::moveLeft(field);
+                    break;
+                case KEY_RIGHT:
+                    Cell::moveRight(field);
+                    break;
+            }
+        } else  if (button == VK_ESCAPE){
+            exit(0);
+        }
+    }
 }
 
 void Cell::printField(Cell (& field)[4][4]) {
@@ -68,6 +90,15 @@ void Cell::printValue() {
 
 void Cell::updateValue(unsigned int newValue) {
     value = newValue;
+    if (newValue == 2048) {
+        system("cls");
+        std::cout << "Congratulations! You've scored 2048!" << std::endl << std::endl;
+        std::cout << "Dev: onemonday" << std::endl;
+        std::cout << "Press any key to close";
+        unsigned char escapeChar = getch();
+        if (escapeChar)
+            exit(0);
+    }
 }
 
 void Cell::createNewSquare(Cell (& field)[4][4]) {
